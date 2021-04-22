@@ -9,6 +9,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const main = () => {
+  
+
+
   const meetings = JSON.parse(fs.readFileSync("speakers.json", "utf8"));
   const speakers = {};
   meetings.forEach((item) => {
@@ -43,6 +46,7 @@ const main = () => {
       speakers[speakerThree] = null;
     }
   });
+
   const speakerKeys = Object.keys(speakers);
 
   speakerKeys.forEach((key) => {
@@ -56,14 +60,16 @@ const main = () => {
       speakers[key] = meetingsSpokeIn[meetingsSpokeIn.length - 1].Date;
     }
   });
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout,
-      });
-      rl.question("Enter Speaker: ", function(name){
-          console.log(speakers[name]);
-          rl.close();
-    })
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  rl.question(" Enter Speaker: ", function (name) {
+    console.log(speakers)
+    console.log(speakers[name]);
+    rl.close();
+  });
+
   //   express.use(cors());
   //   express.use(bodyParser.json());
 };
