@@ -7,13 +7,18 @@ const expressFramework = require("express");
 const express = expressFramework();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const { json } = require("body-parser");
+const speakers = {};
 
 const main = () => {
-  
+  express.use(cors());
+  express.use(bodyParser.json());
 
+  express.get("/api/v1/speakers", (req, res) => {
+    res.json(speakers);
+  });
 
   const meetings = JSON.parse(fs.readFileSync("speakers.json", "utf8"));
-  const speakers = {};
   meetings.forEach((item) => {
     const speakerOne = item["Speaker 1"];
     const speakerTwo = item["Speaker 2"];
@@ -60,18 +65,6 @@ const main = () => {
       speakers[key] = meetingsSpokeIn[meetingsSpokeIn.length - 1].Date;
     }
   });
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  rl.question(" Enter Speaker: ", function (name) {
-    console.log(speakers)
-    console.log(speakers[name]);
-    rl.close();
-  });
-
-  //   express.use(cors());
-  //   express.use(bodyParser.json());
 };
 
 if (!fs.existsSync("speakers.json")) {
@@ -89,6 +82,6 @@ if (!fs.existsSync("speakers.json")) {
 }
 
 main();
-// express.listen(DEFAULT_PORT, () => {
-//   console.log(`Service is listening on ${DEFAULT_PORT}`);
-// });
+express.listen(DEFAULT_PORT, () => {
+  console.log(`Service is listening on ${DEFAULT_PORT}`);
+});
