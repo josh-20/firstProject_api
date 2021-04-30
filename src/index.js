@@ -8,17 +8,46 @@ const express = expressFramework();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { json } = require("body-parser");
-const speakers = {};
+const { URLSearchParams } = require("url");
 
 const main = () => {
+  const meetings = JSON.parse(fs.readFileSync("speakers.json", "utf8"));
+  const speakers = {};
+
   express.use(cors());
   express.use(bodyParser.json());
 
   express.get("/api/v1/speakers", (req, res) => {
-    res.json(speakers);
-  });
+    if (req.query.value !== "last_Week") {
+      const speakerKeys = Object.keys(speakers);
+      speakerKeys.forEach((key) => {
+        const meetingsSpokeIn = meetings.filter(
+          (x) =>
+            key === x["Speaker 1"] ||
+            key === x["Speaker 2"] ||
+            key === x["Speaker 3"]
+        );
 
-  const meetings = JSON.parse(fs.readFileSync("speakers.json", "utf8"));
+        if (meetingsSpokeIn.length > 0 && req.query.value == "recent") {
+          speakers[key] = meetingsSpokeIn[meetingsSpokeIn.length - 1].Date;
+        } else if (meetingsSpokeIn.legnth > 1 && req.query.value == "oldest") {
+          speakers[keys] = meetingsSpokeIn[meetingsSpokeIn[0].Date];
+        }
+      });
+      res.json(speakers);
+    } else {
+      let notFound = true;
+      let count = 1;
+
+      while (notFound) {
+        if (meetings[meetings.length - count]['Speaker 1'] !== "") {
+          res.json(meetings[meetings.length - count]);
+          notFound = false;
+        }
+        count += 1;
+      }
+    }
+  });
   meetings.forEach((item) => {
     const speakerOne = item["Speaker 1"];
     const speakerTwo = item["Speaker 2"];
@@ -51,22 +80,7 @@ const main = () => {
       speakers[speakerThree] = null;
     }
   });
-
-  const speakerKeys = Object.keys(speakers);
-
-  speakerKeys.forEach((key) => {
-    const meetingsSpokeIn = meetings.filter(
-      (x) =>
-        key === x["Speaker 1"] ||
-        key === x["Speaker 2"] ||
-        key === x["Speaker 3"]
-    );
-    if (meetingsSpokeIn.length > 0) {
-      speakers[key] = meetingsSpokeIn[meetingsSpokeIn.length - 1].Date;
-    }
-  });
 };
-
 if (!fs.existsSync("speakers.json")) {
   xlsxj(
     {
