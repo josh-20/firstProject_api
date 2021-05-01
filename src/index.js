@@ -18,8 +18,10 @@ const main = () => {
   express.use(bodyParser.json());
 
   express.get("/api/v1/speakers", (req, res) => {
+    console.log(req.query.value)
     if (req.query.value !== "last_Week") {
       const speakerKeys = Object.keys(speakers);
+      
       speakerKeys.forEach((key) => {
         const meetingsSpokeIn = meetings.filter(
           (x) =>
