@@ -18,7 +18,7 @@ const main = () => {
   express.use(bodyParser.json());
 
   express.get("/api/v1/speakers", (req, res) => {
-    if (req.query.value !== "last_Week") {
+    if (req.query.value === "recent" || req.query.value === "oldest") {
       const speakerKeys = Object.keys(speakers);
       speakerKeys.forEach((key) => {
         const meetingsSpokeIn = meetings.filter(
@@ -35,12 +35,13 @@ const main = () => {
         }
       });
       res.json(speakers);
-    } else {
+    } else if (req.query.value === "first_Week") {
+      res.json(meetings[1]);
+    } else if (req.query.value === "last_Week") {
       let notFound = true;
       let count = 1;
-
       while (notFound) {
-        if (meetings[meetings.length - count]['Speaker 1'] !== "") {
+        if (meetings[meetings.length - count]["Speaker 1"] !== "") {
           res.json(meetings[meetings.length - count]);
           notFound = false;
         }
